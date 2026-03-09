@@ -16,7 +16,6 @@ frontend/tsconfig.tsbuildinfo
 
 # Secrets
 .env
-.env.*
 
 # Data (local development)
 data/
