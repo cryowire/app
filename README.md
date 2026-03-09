@@ -4,78 +4,99 @@ Web UI for browsing and editing dilution refrigerator wiring configurations.
 
 Built with FastAPI + Next.js on top of [cryo-wiring-core](https://github.com/cryo-wiring/core).
 
-## Related Repositories
+## For Users
 
-| Repository                                                      | Description                          |
-| --------------------------------------------------------------- | ------------------------------------ |
-| [cryo-wiring/spec](https://github.com/cryo-wiring/spec)         | YAML format specification & schemas  |
-| [cryo-wiring/core](https://github.com/cryo-wiring/core)         | Python library (models, validation, diagram, builder) |
-| [cryo-wiring/cli](https://github.com/cryo-wiring/cli)           | CLI tool                             |
-| [cryo-wiring/template](https://github.com/cryo-wiring/template) | Data repository template             |
+### 1. Create your data repository
 
-## Quick Start (Docker Compose)
+Go to [cryo-wiring/template](https://github.com/cryo-wiring/template) and click **"Use this template"** to create your own data repository on GitHub.
 
-### Production
+### 2. Customize templates
+
+In your new repository, edit the files to match your lab:
+
+| File | What to customize |
+|---|---|
+| `components.yaml` | Register the RF/microwave parts in your lab |
+| `templates/control_module.yaml` | Default control line wiring |
+| `templates/readout_send_module.yaml` | Default readout send wiring |
+| `templates/readout_return_module.yaml` | Default readout return wiring |
+
+Delete the sample data (`your-cryo/` directory) and push.
+
+### 3. Launch the app
+
+```bash
+git clone https://github.com/cryo-wiring/app.git
+cd app
+cp .env.example .env
+```
+
+Edit `.env` with your repository URL and GitHub token:
+
+```bash
+REPO_URL=https://github.com/<your-user>/<your-repo>.git
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+The token is required for the app to push changes back to your repository.
+Generate one at [github.com/settings/tokens](https://github.com/settings/tokens) with `repo` scope.
 
 ```bash
 make up
 ```
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
+Open http://localhost:3000 and start managing your wiring configurations.
 
-Data is persisted in the `cryo-data` Docker volume. On first launch, open the UI and enter a repository URL (e.g. `https://github.com/cryo-wiring/template.git`) to get started.
+### 4. Daily workflow
 
-To pre-configure a repository:
+- **New cooldown** — Click "New Cooldown" in the UI. Creates `<cryo>/<YYYY>/cdNNN/` automatically
+- **Edit wiring** — Click any line to modify components per stage
+- **View diagrams** — Wiring diagrams and summary tables update in real-time
+- **Git sync** — All changes are committed and pushed to your GitHub repository automatically
+
+## Related Repositories
+
+| Repository | Description |
+|---|---|
+| [cryo-wiring/spec](https://github.com/cryo-wiring/spec) | YAML format specification & schemas |
+| [cryo-wiring/core](https://github.com/cryo-wiring/core) | Python library (models, validation, diagram, builder) |
+| [cryo-wiring/cli](https://github.com/cryo-wiring/cli) | CLI tool |
+| [cryo-wiring/template](https://github.com/cryo-wiring/template) | Data repository template |
+
+---
+
+## For Developers
+
+### Docker Compose
 
 ```bash
-REPO_URL=https://github.com/cryo-wiring/template.git make up
-```
+# Production (built images, named volume)
+make up
 
-### Development (hot-reload)
-
-```bash
+# Development (hot-reload, local ./data mount)
+make seed       # Populate sample data (first time only)
 make up-dev
-```
 
-Uses `./data/` as the data directory (bind mount) and enables Next.js hot-reload. To populate initial data:
-
-```bash
-make seed    # Copies seed/ → data/
-make up-dev
-```
-
-### Stop
-
-```bash
+# Stop
 make down
 ```
 
-## Local Development (no Docker)
+### Local Development (no Docker)
 
 ```bash
-# 1. Install dependencies
-make setup
-
-# 2. Populate sample data
-make seed
-
-# 3. Run (in separate terminals)
-make backend    # API server on http://localhost:8000
-make frontend   # Next.js dev server on http://localhost:3000
+make setup      # Install Python + Node dependencies
+make seed       # Populate sample data
+make backend    # Terminal 1: API server on :8000
+make frontend   # Terminal 2: Next.js dev server on :3000
 ```
 
-Open http://localhost:3000.
-
-## OpenAPI / API Client
-
-To regenerate the frontend API client from the FastAPI schema:
+### OpenAPI / API Client
 
 ```bash
-make api-schema
+make api-schema   # Export schema + regenerate frontend client (Orval)
 ```
 
-## Project Structure
+### Project Structure
 
 ```
 app/

@@ -79,15 +79,18 @@ class DataRepo:
         """Clone or open the data repository. Returns the working directory path.
 
         If no remote_url was provided, tries to load REPO_URL from .env.
+        GITHUB_TOKEN env var is used to authenticate HTTPS clones for push access.
         """
         if not self.remote_url:
             self._load_from_env()
 
         if self.remote_url:
+            clone_url = self._inject_token(self.remote_url)
             if self.local_path.exists():
                 try:
                     self._repo = Repo(self.local_path)
                     self._configure_git_user()
+                    self._update_remote_url(clone_url)
                     logger.info("Opened existing repo: %s", self.local_path)
                     self.pull()
                 except InvalidGitRepositoryError:
@@ -97,7 +100,7 @@ class DataRepo:
                     )
             else:
                 logger.info("Cloning %s -> %s", self.remote_url, self.local_path)
-                self._repo = Repo.clone_from(self.remote_url, self.local_path)
+                self._repo = Repo.clone_from(clone_url, self.local_path)
                 self._configure_git_user()
             self._save_to_env()
         else:
@@ -148,6 +151,28 @@ class DataRepo:
                 config.set_value("user", "email", "cryo-wiring-app@localhost")
         finally:
             config.release()
+
+    # ── Token injection ─────────────────────────────────────────────────
+
+    @staticmethod
+    def _inject_token(url: str) -> str:
+        """Inject GITHUB_TOKEN into HTTPS URLs for push access."""
+        token = os.environ.get("GITHUB_TOKEN", "")
+        if token and url.startswith("https://") and "@" not in url:
+            return url.replace("https://", f"https://x-access-token:{token}@", 1)
+        return url
+
+    def _update_remote_url(self, url: str) -> None:
+        """Update the origin remote URL (e.g. when token changes)."""
+        if self._repo is None:
+            return
+        try:
+            current = self._repo.remotes.origin.url
+            if current != url:
+                self._repo.remotes.origin.set_url(url)
+                logger.info("Updated remote URL")
+        except Exception:
+            pass
 
     # ── .env persistence ──────────────────────────────────────────────────
 
