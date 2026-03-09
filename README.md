@@ -1,8 +1,14 @@
-# cryowire-app
+<a href="https://github.com/cryowire">
+  <img src="https://raw.githubusercontent.com/cryowire/artwork/main/logo-type/logotype.png" alt="cryowire" width="400" />
+</a>
+
+# cryowire/app
 
 Web UI for browsing and editing dilution refrigerator wiring configurations.
 
 Built with FastAPI + Next.js on top of [cryowire](https://github.com/cryowire/core).
+
+See **[cryowire.github.io](https://cryowire.github.io/)** for the full project overview.
 
 ## For Users
 
@@ -53,15 +59,6 @@ Open http://localhost:3000 and start managing your wiring configurations.
 - **Edit wiring** — Click any line to modify components per stage
 - **View diagrams** — Wiring diagrams and summary tables update in real-time
 - **Git sync** — All changes are committed and pushed to your GitHub repository automatically
-
-## Related Repositories
-
-| Repository | Description |
-|---|---|
-| [cryowire/spec](https://github.com/cryowire/spec) | YAML format specification & schemas |
-| [cryowire/core](https://github.com/cryowire/core) | Python library (models, validation, diagram, builder) |
-| [cryowire/cli](https://github.com/cryowire/cli) | CLI tool |
-| [cryowire/template](https://github.com/cryowire/template) | Data repository template |
 
 ---
 
