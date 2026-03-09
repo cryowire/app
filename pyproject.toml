@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Web UI for cryowire configuration manager"
 requires-python = ">=3.11"
 dependencies = [
-    "cryowire @ git+https://github.com/cryowire/core.git",
+    "cryowire @ git+https://github.com/cryowire/cryowire.git",
     "fastapi>=0.110",
     "uvicorn[standard]>=0.27",
     "gitpython>=3.1",
