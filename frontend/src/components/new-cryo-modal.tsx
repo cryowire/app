@@ -97,7 +97,7 @@ export function NewCryoModal({ onClose, onCreated }: Props) {
           </div>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-cryo-300">Name <span className="text-red-400">*</span></span>
-            <input name="cryo" required placeholder="e.g. anemone" className="input font-mono" autoFocus />
+            <input name="cryo" required placeholder="e.g. your-cryo" className="input font-mono" autoFocus />
           </label>
         </div>
 
